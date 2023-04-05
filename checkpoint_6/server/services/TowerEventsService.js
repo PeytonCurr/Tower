@@ -1,11 +1,16 @@
-import { BadRequest } from "../utils/Errors.js"
+import { BadRequest, Forbidden } from "../utils/Errors.js"
 import { dbContext } from "../db/DbContext.js";
 
 
 class TowerEventsService {
-  async getAll() {
-    const towerEvents = await dbContext.TowerEvents.find()
+  async getAll(query) {
+    const towerEvents = await dbContext.TowerEvents.find(query)
       .populate('creator', 'picture name')
+
+    if (towerEvents == null) {
+      throw new BadRequest(`The TowerEvents you are trying to get do not exist`)
+    }
+
     return towerEvents
   }
   async getOne(towerEventId) {
@@ -19,8 +24,12 @@ class TowerEventsService {
   async edit(towerEventEdits, towerEventId, userId) {
     const towerEvent = await this.getOne(towerEventId)
 
+    if (towerEvent.isCanceled == true) {
+      throw new BadRequest(`TowerEvent: ${towerEvent.name} can't be edited, as it has been canceled `)
+    }
+
     if (userId != towerEvent.creatorId) {
-      throw new BadRequest(`You are not the creator of this TowerEvent`)
+      throw new Forbidden(`You are not authorized to edit TowerEvent: ${towerEvent.name}`)
     }
 
     towerEvent.name = towerEventEdits.name || towerEvent.name
@@ -42,7 +51,21 @@ class TowerEventsService {
     await towerEvent.populate('creator', 'picture name')
     return towerEvent
   }
+  async cancel(userId, towerEventId) {
+    const towerEvent = await this.getOne(towerEventId)
 
+    if (userId != towerEvent.creatorId) {
+      throw new Forbidden(`You are not authorized to cancel ${towerEvent.name}`)
+    }
+
+    if (towerEvent.isCanceled == true) {
+      throw new Forbidden(`TowerEvent: ${towerEvent.name} has already been canceled`)
+    }
+
+    towerEvent.isCanceled = true
+    await towerEvent.save()
+    return `TowerEvent: ${towerEvent.name} was Canceled`
+  }
 }
 
 export const towerEventsService = new TowerEventsService();

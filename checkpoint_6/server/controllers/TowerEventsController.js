@@ -12,12 +12,12 @@ export class TowerEventsController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .put('/:towerEventId', this.edit)
       .post('', this.create)
+      .delete('/:towerEventId', this.cancel)
   }
-
-
   async getAll(req, res, next) {
     try {
-      const towerEvents = await towerEventsService.getAll();
+      const query = req.query
+      const towerEvents = await towerEventsService.getAll(query);
       return res.send(towerEvents)
     } catch (error) {
       next(error)
@@ -53,5 +53,14 @@ export class TowerEventsController extends BaseController {
       next(error)
     }
   }
-
+  async cancel(req, res, next) {
+    try {
+      const userId = req.userInfo.id
+      const towerEventId = req.params.towerEventId
+      const message = await towerEventsService.cancel(userId, towerEventId)
+      return res.send(message)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
