@@ -13,7 +13,7 @@ export class TowerEvent {
     this.isCanceled = data.isCanceled
     this.creatorId = data.creatorId
     this.creator = new Profile(data.creator)
-    this.createdAt = new Date(data.createdAt)
-    this.startDate = new Date(data.startDate)
+    this.createdAt = new Date(data.createdAt).toLocaleDateString()
+    this.startDate = new Date(data.startDate).toLocaleDateString()
   }
 }

@@ -9,7 +9,7 @@ class TowerEventsService {
     const res = await api.get(`/api/events`);
     // logger.log(res.data)
     AppState.towerEvents = res.data.map(t => new TowerEvent(t))
-    logger.log(AppState.towerEvents)
+    // logger.log(AppState.towerEvents)
   }
 
 }

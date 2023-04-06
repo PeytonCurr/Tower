@@ -3,7 +3,7 @@
 
     <div class="col-12">
 
-      <!-- SECTION Hero Img -->\
+      <!-- SECTION Hero Img -->
       <div></div>
 
     </div>
@@ -20,9 +20,10 @@
       <!-- SECTION Event list Area -->
       <section class="row">
 
-        <!-- STUB TowerEventComponent -->
-        <div class="col-3">
-          <div></div>
+        <div class="col-3 g-3" v-for="t in towerEvents">
+          <!-- STUB TowerEventComponent -->
+          <TowerEventCard :t="t" />
+
         </div>
 
       </section>
@@ -38,29 +39,27 @@ import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
 import { towerEventsService } from '../services/TowerEventsService.js'
 import { AppState } from '../AppState';
+import TowerEventCard from '../components/TowerEventCard.vue';
 
 export default {
   setup() {
-
     async function getTowerEvents() {
       try {
         await towerEventsService.getTowerEvents();
-      } catch (error) {
+      }
+      catch (error) {
         logger.error(error.message);
         Pop.error(error.message);
       }
     }
-
     onMounted(() => {
-      getTowerEvents()
-    })
-
+      getTowerEvents();
+    });
     return {
-
       towerEvents: computed(() => AppState.towerEvents)
-
-    }
-  }
+    };
+  },
+  components: { TowerEventCard }
 }
 </script>
 
