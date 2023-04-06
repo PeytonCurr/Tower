@@ -3,6 +3,27 @@ import { dbContext } from "../db/DbContext.js";
 
 
 class TowerEventsService {
+  async getEventTickets(eventId) {
+    const tickets = await dbContext.Tickets.find({ eventId })
+      .populate(`profile`, `picture `)
+      .populate(`event`)
+
+    if (tickets == null) {
+      throw new BadRequest("That TowerEvent does not have any Tickets");
+    }
+
+    return tickets
+  }
+  async getEventsComments(eventId) {
+    const comments = await dbContext.Comments.find({ eventId })
+      .populate(`creator`, `picture name`)
+
+    if (comments == null) {
+      throw new BadRequest("That TowerEvent does not have any Comments");
+    }
+
+    return comments
+  }
   async getAll(query) {
     const towerEvents = await dbContext.TowerEvents.find(query)
       .populate('creator', 'picture name')

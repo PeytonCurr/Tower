@@ -1,8 +1,8 @@
 <template>
   <main class="container-fluid bg-dark p-0 m-0">
     <section class="row p-0 m-0">
-      <div class="col-11 p-0">
-        <header></header>
+      <div class="col-11 p-3">
+        <img src="src\assets\img\Logo-removebg-preview.png" height="70" alt="">
         <router-view />
       </div>
       <div class="col-1 nav">

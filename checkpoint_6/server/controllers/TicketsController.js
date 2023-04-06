@@ -5,22 +5,11 @@ import { ticketsService } from "../services/TicketsService.js"
 
 export class TicketsController extends BaseController {
   constructor() {
-    super('')
+    super('/api/tickets')
     this.router
-      .get(`/api/events/:eventId/tickets`, this.getEventTickets)
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post(`/api/tickets`, this.create)
-      .get(`/account/tickets`, this.getMyTickets)
       .delete(`/api/tickets/:ticketId`, this.delete)
-  }
-  async getEventTickets(req, res, next) {
-    try {
-      const eventId = req.params.eventId
-      const tickets = await ticketsService.getEventTickets(eventId);
-      return res.send(tickets)
-    } catch (error) {
-      next(error)
-    }
   }
   async create(req, res, next) {
     try {
@@ -28,15 +17,6 @@ export class TicketsController extends BaseController {
       ticketData.accountId = req.userInfo.id
       const ticket = await ticketsService.create(ticketData);
       return res.send(ticket)
-    } catch (error) {
-      next(error)
-    }
-  }
-  async getMyTickets(req, res, next) {
-    try {
-      const userId = req.userInfo.id
-      const tickets = await ticketsService.getMyTickets(userId);
-      return res.send(tickets)
     } catch (error) {
       next(error)
     }

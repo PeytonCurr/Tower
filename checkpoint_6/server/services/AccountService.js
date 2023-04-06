@@ -1,4 +1,5 @@
 import { dbContext } from '../db/DbContext'
+import { BadRequest } from '../utils/Errors.js'
 
 // Private Methods
 
@@ -10,7 +11,7 @@ import { dbContext } from '../db/DbContext'
 async function createAccountIfNeeded(account, user) {
   if (!account) {
     user._id = user.id
-    if(typeof user.name == 'string' && user.name.includes('@')){
+    if (typeof user.name == 'string' && user.name.includes('@')) {
       user.name = user.nickname
     }
     account = await dbContext.Account.create({
@@ -61,6 +62,18 @@ class AccountService {
     account = await createAccountIfNeeded(account, user)
     await mergeSubsIfNeeded(account, user)
     return account
+  }
+
+  async getMyTickets(userId) {
+    const tickets = await dbContext.Tickets.find({ accountId: userId })
+      .populate(`profile`, `picture name`)
+      .populate(`event`)
+
+    if (tickets == null) {
+      throw new BadRequest(`You do not have any Tickets`)
+    }
+
+    return tickets
   }
 
   /**

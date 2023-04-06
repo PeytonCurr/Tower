@@ -9,6 +9,9 @@
           <img :src="account.picture || user.picture" alt="account photo" class="rounded img-fluid" />
         </div>
       </button>
+      <router-link :to="{ name: 'Home' }">
+        <button class="btn text-primary my-1"> Home </button>
+      </router-link>
       <router-link :to="{ name: 'Account' }">
         <button class="btn text-primary my-1"> Account </button>
       </router-link>

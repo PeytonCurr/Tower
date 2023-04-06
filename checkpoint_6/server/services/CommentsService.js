@@ -3,16 +3,6 @@ import { BadRequest, Forbidden } from "../utils/Errors.js";
 
 
 class CommentsService {
-  async getEventsComments(eventId) {
-    const comments = await dbContext.Comments.find({ eventId })
-      .populate(`creator`, `picture name`)
-
-    if (comments == null) {
-      throw new BadRequest("That TowerEvent does not have any Comments");
-    }
-
-    return comments
-  }
   async create(commentData) {
     const comment = await dbContext.Comments.create(commentData)
     await comment.populate(`creator`, `picture name`)

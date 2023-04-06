@@ -6,21 +6,11 @@ import { commentsService } from "../services/CommentsService.js";
 
 export class CommentsController extends BaseController {
   constructor() {
-    super('/api')
+    super('/api/comments')
     this.router
-      .get(`/events/:eventId/comments`, this.getEventComments)
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post(`/comments`, this.create)
       .delete(`/comments/:commentId`, this.delete)
-  }
-  async getEventComments(req, res, next) {
-    try {
-      const eventId = req.params.eventId
-      const comments = await commentsService.getEventsComments(eventId)
-      return res.send(comments)
-    } catch (error) {
-      next(error)
-    }
   }
   async create(req, res, next) {
     try {

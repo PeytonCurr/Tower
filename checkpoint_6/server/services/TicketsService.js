@@ -4,17 +4,6 @@ import { towerEventsService } from "./TowerEventsService.js";
 
 
 class TicketsService {
-  async getEventTickets(eventId) {
-    const tickets = await dbContext.Tickets.find({ eventId })
-      .populate(`profile`, `picture `)
-      .populate(`event`)
-
-    if (tickets == null) {
-      throw new BadRequest("That TowerEvent does not have any Tickets");
-    }
-
-    return tickets
-  }
   async create(ticketData) {
 
     const towerEvent = await towerEventsService.getOne(ticketData.eventId)
@@ -31,18 +20,6 @@ class TicketsService {
     await towerEvent.save()
 
     return ticket
-  }
-
-  async getMyTickets(userId) {
-    const tickets = await dbContext.Tickets.find({ accountId: userId })
-      .populate(`profile`, `picture name`)
-      .populate(`event`)
-
-    if (tickets == null) {
-      throw new BadRequest(`You do not have any Tickets`)
-    }
-
-    return tickets
   }
   async delete(userId, ticketId) {
     const ticket = await dbContext.Tickets.findById(ticketId)
