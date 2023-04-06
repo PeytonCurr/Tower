@@ -9,8 +9,8 @@ export class CommentsController extends BaseController {
     super('/api/comments')
     this.router
       .use(Auth0Provider.getAuthorizedUserInfo)
-      .post(`/comments`, this.create)
-      .delete(`/comments/:commentId`, this.delete)
+      .post(``, this.create)
+      .delete(`/:commentId`, this.delete)
   }
   async create(req, res, next) {
     try {

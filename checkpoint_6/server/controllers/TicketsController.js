@@ -8,8 +8,8 @@ export class TicketsController extends BaseController {
     super('/api/tickets')
     this.router
       .use(Auth0Provider.getAuthorizedUserInfo)
-      .post(`/api/tickets`, this.create)
-      .delete(`/api/tickets/:ticketId`, this.delete)
+      .post(``, this.create)
+      .delete(`/:ticketId`, this.delete)
   }
   async create(req, res, next) {
     try {

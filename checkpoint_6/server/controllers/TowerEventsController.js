@@ -7,8 +7,8 @@ export class TowerEventsController extends BaseController {
   constructor() {
     super('/api/events')
     this.router
-      .get(`/api/events/:eventId/tickets`, this.getEventTickets)
-      .get(`/events/:eventId/comments`, this.getEventComments)
+      .get(`/:eventId/tickets`, this.getEventTickets)
+      .get(`/:eventId/comments`, this.getEventComments)
       .get('', this.getAll)
       .get('/:towerEventId', this.getOne)
       .use(Auth0Provider.getAuthorizedUserInfo)
