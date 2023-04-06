@@ -1,64 +1,52 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-    <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
-      <div class="d-flex flex-column align-items-center">
-        <img alt="logo" src="../assets/img/cw-logo.png" height="45" />
-      </div>
-    </router-link>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarText"
-      aria-controls="navbarText"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
+  <span class="">
+    <button class="btn btn-success center selectable text-uppercase mt-3" @click="login" v-if="!user.isAuthenticated">
+      Login
     </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto">
-        <li>
-          <router-link :to="{ name: 'About' }" class="btn text-success lighten-30 selectable text-uppercase">
-            About
-          </router-link>
-        </li>
-      </ul>
-      <!-- LOGIN COMPONENT HERE -->
-      <Login />
+    <div class="width text-center p-3" v-else>
+      <button class="btn selectable no-select mb-1">
+        <div v-if="account.picture || user.picture">
+          <img :src="account.picture || user.picture" alt="account photo" class="rounded img-fluid" />
+        </div>
+      </button>
+      <router-link :to="{ name: 'Account' }">
+        <button class="btn text-primary my-1"> Account </button>
+      </router-link>
+
+      <button class="btn btn-outline-primary text-primary selectable my-1" @click="logout">
+        <i class="mdi mdi-logout"></i>
+        logout
+      </button>
     </div>
-  </nav>
+  </span>
 </template>
 
 <script>
-import Login from './Login.vue'
+import { computed } from 'vue'
+import { AppState } from '../AppState'
+import { AuthService } from '../services/AuthService'
 export default {
   setup() {
-    return {}
-  },
-  components: { Login }
+    return {
+      user: computed(() => AppState.user),
+      account: computed(() => AppState.account),
+      async login() {
+        AuthService.loginWithPopup()
+      },
+      async logout() {
+        AuthService.logout({ returnTo: window.location.origin })
+      }
+    }
+  }
 }
 </script>
 
-<style scoped>
-a:hover {
-  text-decoration: none;
+<style lang="scss" scoped>
+.center {
+  margin-left: 2.8em;
 }
 
-.nav-link {
-  text-transform: uppercase;
+.width {
+  width: 100%;
 }
-
-.navbar-nav .router-link-exact-active {
-  border-bottom: 2px solid var(--bs-success);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-@media screen and (min-width: 768px) {
-  nav {
-    height: 64px;
-  }
-}
-
 </style>
