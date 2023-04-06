@@ -5,8 +5,8 @@ import { api } from "./AxiosService.js";
 
 
 class TowerEventsService {
-  async getTowerEvents() {
-    const res = await api.get(`/api/events`);
+  async getTowerEvents(query) {
+    const res = await api.get(`/api/events`, { type: query });
     // logger.log(res.data)
     AppState.towerEvents = res.data.map(t => new TowerEvent(t))
     // logger.log(AppState.towerEvents)

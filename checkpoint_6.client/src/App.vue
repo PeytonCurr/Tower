@@ -1,5 +1,5 @@
 <template>
-  <main class="container-fluid bg-dark p-0 m-0 text-light">
+  <main class="container-fluid bg-dark p-0 m-0">
     <section class="row p-0 m-0">
       <div class="col-11 p-2">
         <section class="row my-2">
