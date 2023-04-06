@@ -1,8 +1,12 @@
 <template>
   <main class="container-fluid bg-dark p-0 m-0">
     <section class="row p-0 m-0">
-      <div class="col-11 p-3">
-        <img src="src\assets\img\Logo-removebg-preview.png" height="70" alt="">
+      <div class="col-11 p-2">
+        <section class="row my-2">
+          <div class="col-3">
+            <img src="src\assets\img\Logo-removebg-preview.png" alt="" class="img-fluid">
+          </div>
+        </section>
         <router-view />
       </div>
       <div class="col-1 nav">
