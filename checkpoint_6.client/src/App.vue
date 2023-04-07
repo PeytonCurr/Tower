@@ -4,7 +4,9 @@
       <div class="col-11 p-2">
         <section class="row my-2">
           <div class="col-3">
-            <img src="src\assets\img\Logo-removebg-preview.png" alt="" class="img-fluid">
+            <router-link :to="{ name: 'Home' }">
+              <img src="src\assets\img\Logo-removebg-preview.png" alt="" class="img-fluid">
+            </router-link>
           </div>
         </section>
         <router-view />

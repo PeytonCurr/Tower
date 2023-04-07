@@ -1,11 +1,13 @@
 <template>
   <section class="row p-3">
-    <div class="col-12">
+    <div class="col-12 my-3">
 
-      <!-- SECTION Event list Area -->
-      <section class="row elevation-5 p-3 bg-grey selectable">
+      <!-- SECTION Active Event -->
+      <section class="row elevation-5 p-3 bg-grey rounded">
+        <div class="text-end" v-if="account.id == activeTowerEvent?.creatorId">
+          <button class="btn btn-outline-danger" @click="cancelTowerEvent()">Cancel Event</button>
+        </div>
 
-        <!-- STUB TowerEventComponent -->
         <div class="col-5 my-3">
           <img class="img-fluid detail-pic" :src="activeTowerEvent?.coverImg" :alt="activeTowerEvent?.name">
         </div>
@@ -19,13 +21,43 @@
             <br>
             <h6 class="text-light">{{ activeTowerEvent?.description }}</h6>
           </div>
-          <div>
-            <h6 class="text-primary">{{ activeTowerEvent?.capacity }} <span class="text-light">Spots Left</span></h6>
+          <div class="d-flex justify-content-between">
+            <h6 class="text-primary" v-if="!activeTowerEvent?.isCanceled">{{ activeTowerEvent?.capacity }} <span
+                class="text-light">Spots Left</span></h6>
+            <div>
+              <button class="btn btn-warning" @click="createTicket()"
+                v-if="!ticketMembers.find(m => m.id == account.id) && activeTowerEvent?.isCanceled == false && activeTowerEvent?.capacity !== 0">Attend
+                <i class="mdi mdi-gymnastics"></i></button>
+              <button class="btn btn-danger" @click="deleteTicket(isTicketEvent.collaborationId)"
+                v-if="ticketMembers.find(m => m.id == account.id)"> UnAttend <i class=" mdi mdi-gymnastics"></i></button>
+            </div>
           </div>
+        </div>
+        <div class="bg-danger text-dark text-center banner" v-if="activeTowerEvent?.isCanceled == true">
+          <h5>Canceled</h5>
+        </div>
+        <div class="bg-danger text-dark text-center banner" v-if="activeTowerEvent?.capacity == 0">
+          <h5>At Capacity</h5>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-12 my-3">
+
+      <!-- SECTION See Who's Attending -->
+      <h6>See who is attending</h6>
+
+      <section class="row bg-grey elevation-5 rounded p-2">
+
+        <!-- STUB Ticket Owner -->
+        <div class="col-1" v-for="t in ticketMembers" :key="t?.id">
+          <img :title="t?.name" class="rounded-circle" height="60" :src="t?.picture" :alt="t?.name">
         </div>
 
       </section>
+
     </div>
+
   </section>
 </template>
 
@@ -37,6 +69,7 @@ import { logger } from '../utils/Logger';
 import Pop from '../utils/Pop';
 import { useRoute } from 'vue-router';
 import { towerEventsService } from '../services/TowerEventsService';
+import { ticketsService } from '../services/TicketsService';
 
 export default {
   setup() {
@@ -52,14 +85,56 @@ export default {
       }
     }
 
+    async function getAllTicketMembers() {
+      try {
+        await ticketsService.getAllTicketMembers(route.params.towerEventId)
+      } catch (error) {
+        logger.error(error.message);
+        Pop.error(error.message);
+      }
+    }
+
     onMounted(() => {
       getActiveTower()
+      getAllTicketMembers()
     })
 
     return {
 
       activeTowerEvent: computed(() => AppState.activeTowerEvent),
       towerEvents: computed(() => AppState.towerEvents),
+      ticketMembers: computed(() => AppState.ticketMembers),
+      account: computed(() => AppState.account),
+      isTicketEvent: computed(() => AppState.ticketMembers.find(t => t.id == AppState.account.id)),
+
+      async createTicket() {
+        try {
+          await ticketsService.createTicket(AppState.activeTowerEvent?.id);
+        } catch (error) {
+          logger.error(error);
+          Pop.error(error.message);
+        }
+      },
+
+      async deleteTicket(collaborationId) {
+        try {
+          if (await Pop.confirm('Are you sure you want to unAttend?')) {
+            await ticketsService.deleteTicket(collaborationId);
+          }
+        } catch (error) {
+          logger.error(error.message);
+          Pop.error(error.message);
+        }
+      },
+
+      async cancelTowerEvent() {
+        try {
+          await towerEventsService.cancelTowerEvent(AppState.activeTowerEvent?.id);
+        } catch (error) {
+          logger.error(error.message);
+          Pop.error(error.message);
+        }
+      },
 
     }
   }
@@ -71,5 +146,9 @@ export default {
 .detail-pic {
   height: 40vh;
   width: auto;
+}
+
+.banner {
+  width: 100%;
 }
 </style>

@@ -12,8 +12,15 @@ export class TowerEvent {
     this.type = data.type
     this.isCanceled = data.isCanceled
     this.creatorId = data.creatorId
-    this.creator = new Profile(data.creator)
+    this.creator = data.creator ? new Profile(data.creator) : null
     this.createdAt = new Date(data.createdAt).toLocaleDateString()
     this.startDate = new Date(data.startDate).toLocaleDateString()
+  }
+}
+
+export class TicketEvent extends TowerEvent {
+  constructor(data) {
+    super(data.event)
+    this.collaborationId = data.id
   }
 }

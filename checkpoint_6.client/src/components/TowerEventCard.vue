@@ -7,7 +7,7 @@
         <h6 class="text-success">{{ t.type }}</h6>
         <span class="d-flex justify-content-between">
           <h6 class="text-success">{{ t.startDate }}</h6>
-          <h6 class="text-primary">{{ t.capacity }} <span class="text-light">Spots Left</span></h6>
+          <h6 class="text-primary" v-if="!t.isCanceled">{{ t.capacity }} <span class="text-light">Spots Left</span></h6>
         </span>
         <div class="bg-danger text-dark text-center banner" v-if="t.isCanceled == true">
           <h5>Canceled</h5>
