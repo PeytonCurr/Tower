@@ -63,6 +63,7 @@ import { ref } from "vue";
 import { logger } from "../utils/Logger.js";
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService";
+import { router } from "../router";
 
 export default {
   setup() {
@@ -76,7 +77,8 @@ export default {
       async createEvent() {
         try {
           const eventData = selectable.value
-          await towerEventsService.createEvent(eventData)
+          const towerEvent = await towerEventsService.createEvent(eventData)
+          router.push({ name: 'TowerEventDetails', params: { towerEventId: towerEvent.id } })
         } catch (error) {
           logger.log(error.message)
           Pop.error(error.message)
