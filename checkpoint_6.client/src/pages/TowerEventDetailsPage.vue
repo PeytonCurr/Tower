@@ -101,7 +101,7 @@
 
 
 <script lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 import { AppState } from '../AppState';
 import { logger } from '../utils/Logger';
 import Pop from '../utils/Pop';
@@ -143,6 +143,13 @@ export default {
       }
     }
 
+    watchEffect(() => {
+      route.params.towerEventId
+      getActiveTower()
+      getAllTicketMembers()
+      getAllComments()
+    })
+
     onMounted(() => {
       getActiveTower()
       getAllTicketMembers()
@@ -161,6 +168,7 @@ export default {
       async createTicket() {
         try {
           await ticketsService.createTicket(AppState.activeTowerEvent?.id);
+          AppState.activeTowerEvent.capacity--
         } catch (error) {
           logger.error(error);
           Pop.error(error.message);
