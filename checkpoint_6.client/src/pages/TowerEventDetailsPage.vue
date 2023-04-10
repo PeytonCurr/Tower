@@ -50,12 +50,50 @@
       <section class="row bg-grey elevation-5 rounded p-2">
 
         <!-- STUB Ticket Owner -->
-        <div class="col-1" v-for="t in ticketMembers" :key="t?.id">
-          <img :title="t?.name" class="rounded-circle" height="60" :src="t?.picture" :alt="t?.name">
+        <div class="col-12">
+          <span class="p-1" v-for="t in ticketMembers" :key="t?.id">
+            <img :title="t?.name" class="rounded-circle" height="60" :src="t?.picture" :alt="t?.name">
+          </span>
         </div>
 
       </section>
 
+    </div>
+
+    <div class="col-12 my-3">
+
+      <!-- SECTION Comment Area -->
+      <h6>What people are saying</h6>
+      <section class="row bg-grey elevation-5 rounded p-2">
+
+        <!-- STUB Create Comment -->
+        <div class="col-12 text-end" v-if="account?.id">
+          <h6 class="text-success">Join the Conversation</h6>
+          <form @submit.prevent="createComment()">
+            <textarea class="form-control" id="body" cols="30" rows="3" placeholder="Enter your Comment here..." required
+              minlength="3" maxlength="200" v-model="editable.body"></textarea>
+            <button type="submit" class="btn btn-success my-2">Post Comment</button>
+          </form>
+        </div>
+
+        <div class="col-12 pb-4 pe-4" v-if="comments[0]?.body">
+
+          <!-- STUB Comments -->
+          <section class="row p-2" v-for="c in comments">
+            <div class="col-1 text-end ps-0"><img class="rounded-circle" height="80" :src="c.creator?.picture"
+                :alt="c.creator?.name">
+            </div>
+            <div class="col-11 bg-secondary rounded">
+              <div class="d-flex justify-content-between p-1">
+                <h6>{{ c.creator?.name }}</h6> <button class="btn btn-outline-danger text-danger"
+                  v-if="account?.id == c.creatorId" @click="deleteComment(c.id)"><i class="mdi mdi-delete"></i></button>
+              </div>
+              <p>{{ c?.body }}</p>
+            </div>
+          </section>
+
+        </div>
+      </section>
     </div>
 
   </section>
@@ -63,18 +101,29 @@
 
 
 <script lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { AppState } from '../AppState';
 import { logger } from '../utils/Logger';
 import Pop from '../utils/Pop';
 import { useRoute } from 'vue-router';
 import { towerEventsService } from '../services/TowerEventsService';
 import { ticketsService } from '../services/TicketsService';
+import { commentsService } from '../services/CommentsService';
 
 export default {
   setup() {
+    const editable = ref({})
 
     const route = useRoute();
+
+    async function getAllComments() {
+      try {
+        await commentsService.getAllComments(route.params.towerEventId);
+      } catch (error) {
+        logger.error(error.message);
+        Pop.error(error.message);
+      }
+    }
 
     async function getActiveTower() {
       try {
@@ -97,15 +146,17 @@ export default {
     onMounted(() => {
       getActiveTower()
       getAllTicketMembers()
+      getAllComments()
     })
 
     return {
-
+      editable,
       activeTowerEvent: computed(() => AppState.activeTowerEvent),
       towerEvents: computed(() => AppState.towerEvents),
       ticketMembers: computed(() => AppState.ticketMembers),
       account: computed(() => AppState.account),
       isTicketEvent: computed(() => AppState.ticketMembers.find(t => t.id == AppState.account.id)),
+      comments: computed(() => AppState.comments),
 
       async createTicket() {
         try {
@@ -132,6 +183,29 @@ export default {
           await towerEventsService.cancelTowerEvent(AppState.activeTowerEvent?.id);
         } catch (error) {
           logger.error(error.message);
+          Pop.error(error.message);
+        }
+      },
+
+      async createComment() {
+        try {
+          // logger.log('Creating Comment')
+          let commentData = editable.value
+          commentData.eventId = AppState.activeTowerEvent?.id
+          editable.value = {}
+          await commentsService.createComment(commentData);
+        } catch (error) {
+          logger.error(error.message);
+          Pop.error(error.message);
+        }
+      },
+
+      async deleteComment(commentId) {
+        try {
+          // logger.log('Attempting to Delete Comment')
+          await commentsService.deleteComment(commentId);
+        } catch (error) {
+          logger.error(error);
           Pop.error(error.message);
         }
       },

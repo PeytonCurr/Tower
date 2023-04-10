@@ -34,6 +34,11 @@ class TicketsService {
     AppState.ticketMembers = res.data.map(m => new TicketMember(m))
     // logger.log(AppState.ticketMembers, ["Logging AppState.ticketMembers"])
   }
+  async getMyTickets() {
+    const res = await api.get(`/account/tickets`)
+    AppState.myTickets = res.data.map(t => new TicketEvent(t))
+    logger.log(AppState.myTickets)
+  }
 }
 
 export const ticketsService = new TicketsService();

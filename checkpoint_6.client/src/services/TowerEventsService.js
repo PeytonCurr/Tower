@@ -5,8 +5,9 @@ import { api } from "./AxiosService.js";
 
 
 class TowerEventsService {
-  async getTowerEvents(query) {
-    const res = await api.get(`/api/events`, { type: query });
+  async getTowerEvents() {
+    AppState.towerEvents = {}
+    const res = await api.get(`/api/events`);
     // logger.log(res.data)
     AppState.towerEvents = res.data.map(t => new TowerEvent(t))
     // logger.log(AppState.towerEvents)
@@ -29,7 +30,12 @@ class TowerEventsService {
     const res = await api.delete(`/api/events/${towerEventId}`)
     AppState.activeTowerEvent.isCanceled = true
   }
-
+  async getMyTowerEvents() {
+    const accountId = AppState.account?.id
+    AppState.towerEvents = {}
+    const res = await api.get(`/api/events/?creatorId=${accountId}`)
+    AppState.towerEvents = res.data.map(t => new TowerEvent(t))
+  }
 }
 
 export const towerEventsService = new TowerEventsService();

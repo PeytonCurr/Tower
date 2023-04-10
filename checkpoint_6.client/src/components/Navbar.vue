@@ -4,11 +4,11 @@
       Login
     </button>
     <div class="width text-center p-3">
-      <button class="btn selectable no-select mb-1" v-if="user.isAuthenticated">
+      <div class="no-select mb-1 border border-primary" v-if="user.isAuthenticated">
         <div v-if="account.picture || user.picture">
           <img :src="account.picture || user.picture" alt="account photo" class="rounded img-fluid" />
         </div>
-      </button>
+      </div>
       <router-link :to="{ name: 'Home' }">
         <button class="btn text-primary my-1"> Home </button>
       </router-link>

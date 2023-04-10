@@ -2,9 +2,9 @@ import { Schema } from "mongoose";
 
 
 export const CommentSchema = new Schema({
-  creatorId: { type: Schema.Types.ObjectId, required: true },
-  eventId: { type: Schema.Types.ObjectId, required: true },
-  body: { type: String, required: true },
+  creatorId: { type: Schema.Types.ObjectId, required: true, ref: 'Account' },
+  eventId: { type: Schema.Types.ObjectId, required: true, ref: `TowerEvent` },
+  body: { type: String, required: true, minLength: 3, maxLength: 200 },
   isAttending: { type: Boolean, default: false }
 }, { timestamps: true, toJSON: { virtuals: true } })
 

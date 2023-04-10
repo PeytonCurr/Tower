@@ -45,13 +45,12 @@ import { towerEventsService } from '../services/TowerEventsService.js'
 import { AppState } from '../AppState';
 import TowerEventCard from '../components/TowerEventCard.vue';
 import FilterBar from '../components/FilterBar.vue'
-import { query } from 'express';
 
 export default {
   setup() {
-    async function getTowerEvents(query) {
+    async function getTowerEvents() {
       try {
-        await towerEventsService.getTowerEvents(query);
+        await towerEventsService.getTowerEvents();
       }
       catch (error) {
         logger.error(error.message);
